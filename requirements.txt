@@ -37,8 +37,6 @@ matplotlib==3.1.1
 mccabe==0.6.1
 more-itertools==7.2.0
 numpy==1.17.2
-# Editable install with no version control (office-solutions-app==0.0.1)
--e c:\users\greg\appdata\local\programs\python\python37\lib\site-packages
 packaging==19.2
 paho-mqtt==1.4.0
 pandas==0.25.1
