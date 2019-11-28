@@ -30,9 +30,6 @@
       _title_axis_x = _title_axis_x.replace(']','');
       _title_axis_x = _title_axis_x.replace(/&#39;/g,'');
       _title_axis_x = _title_axis_x.replace(/ /g, "")
-      console.log(_values);
-      console.log(_values2);
-      console.log(_values3);
       var series_names = _title_axis_x.split(",");
 
 
@@ -101,7 +98,6 @@
                           default:
                             r = 0;
                         }
-                        console.log(r)
                         chart.destroy();
                         init_graph(r);
                     }
@@ -155,7 +151,6 @@
               };
 
               chart = new Highcharts.Chart(hc_options);
-              console.log(series_names);
                       for(i=0; i<series_names.length; i++){
             chart.addSeries({
                 name: series_names[i],
@@ -200,7 +195,6 @@
               };
 
               chart = new Highcharts.Chart(hc_options);
-              console.log(series_names);
                       for(i=0; i<series_names.length; i++){
             chart.addSeries({
                 name: series_names[i],
