@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Reports</title>
+</head>
+<body>
+    <!-- Highcharts display -->
+	<div class="border" id="container" style="min-width: 250px; height: 750px; margin: 0 auto"></div>
+
+
+    <!-- Chartjs libraries -->
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+
+    <script>
+      _categories = {{categories|safe}};
+      _values = {{values_y1|safe}};
+
+    Highcharts.setOptions({
+        lang: {
+            thousandsSep: ','
+        }
+    });
+
+      Highcharts.chart('container', {
+	  chart: {
+              type: 'column'
+	  },
+	  title: {
+              text: '{{ title }}'
+	  },
+      subtitle: {
+              text: 'Date Range: {{ from_month }}/{{ from_year }} to {{ to_month }}/{{ to_year }}'
+      },
+	  xAxis: {
+          categories:_categories,
+          crosshair: true,
+          title: {
+              text: '{{ title_axis_x }}'
+          }
+	  },
+	  yAxis: {
+          labels: {
+            format: '${value}'
+          },
+          title: {
+            text: '{{ title_axis_y1 }}'
+          }
+	  },
+	  tooltip: {
+              headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+              pointFormat: '<tr><td style="color:{series.color};padding:0">{{ title_axis_y1 }}: </td>' +
+		  '<td style="padding:0"><b>${point.y:.0f}</b></td></tr>',
+              footerFormat: '</table>',
+              shared: true,
+              useHTML: true
+	  },
+	  plotOptions: {
+              column: {
+		  pointPadding: 0.2,
+		  borderWidth: 0
+        }
+	  },
+	  series: [{
+          name: '{{ title_series_names }}',
+          data: _values
+	    }]
+      });
+      </script>
+</body>
+</html>

@@ -3,59 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <title>Reports</title>
-    <script src = "https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-    <script src = "https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/stock/highstock.js"></script>
+    <script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
 </head>
 <body>
-    <p>Report {{ report.id }}</p>
-    <ul>
-        <li>Name : {{ report.name }}</li>
-    </ul>
-
     <!-- Highcharts display -->
-	<div class="border" id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+	<div class="border" id="container" style="min-width: 250px; height: 750px; margin: 0 auto"></div>
 
     <a href="{% url 'index' %}">Back to Report List</a>
 
-      <script language = "JavaScript">
-         $(document).ready(function() {
-             var _categories = {{ categories|safe }}
-             var _values_y1 = {{ values_y1|safe }}
-             var _values_y2 = {{ values_y2|safe }}
+    <script>
+        var _categories = {{ categories|safe }}
+        var _values_y1 = {{ values_y1|safe }}
+        var _values_y2 = {{ values_y2|safe }}
+        var _title_axis_x = '{{ title_series_names }}';
+        var series_names = _title_axis_x.split(",");
 
-             var chart = {
-               zoomType: 'xy'
-            };
-            var subtitle = {
-               text: ''
-            };
-            var title = {
+    Highcharts.setOptions({
+        lang: {
+            thousandsSep: ','
+        }
+    });
+
+    Highcharts.chart('container',
+    {
+        title: {
                text: '{{ title }}'
-            };
-            var xAxis = {
-               categories: _categories,
-               crosshair: true
-            };
-            var yAxis = [
+        },
+        subtitle: {
+               text: 'Date Range: {{ from_month }}/{{ from_year }} to {{ to_month }}/{{ to_year }}'
+        },
+        xAxis: {
+          categories: _categories,
+          crosshair: true,
+            title: {
+              text: 'Customer Name'
+            }
+        },
+        yAxis: [
                { // Primary yAxis
+                 title: {
+                     text: '',
+                     style: {
+                        color: Highcharts.getOptions().colors[0]
+                     }
+                  },
                   labels: {
                      format: '{value}\xB0C',
                      style: {
                         color: Highcharts.getOptions().colors[2]
                      }
                   },
-
-
                },
                { // Secondary yAxis
                   title: {
-                     text: 'Profit',
+                     text: '{{ title_axis_y1 }}',
                      style: {
                         color: Highcharts.getOptions().colors[0]
                      }
                   },
                   labels: {
-                     format: '{value}',
+                     format: '${value}',
                      style: {
                         color: Highcharts.getOptions().colors[0]
                      }
@@ -64,7 +72,7 @@
                { // Tertiary yAxis
                   gridLineWidth: 0,
                   title: {
-                     text: '# of Orders',
+                     text: '{{ title_axis_y2 }}',
                      style: {
                         color: Highcharts.getOptions().colors[1]
                      }
@@ -77,35 +85,32 @@
                   },
                   opposite:true
                }
-            ];
-            var tooltip = {
-               shared: true
-            };
-            var legend = {
-               layout: 'vertical',
-               align: 'left',
-               x: 120,
-               verticalAlign: 'top',
-               y: 100,
-               floating: true,
+            ],
+	  tooltip: {
+          shared: true,
+	  },
+        legend: {
+            layout: 'horizontal',
+            itemDistance: 150,
 
-               backgroundColor: (
-                  Highcharts.theme && Highcharts.theme.legendBackgroundColor)
-                  || '#FFFFFF'
-            };
-            var series = [
+
+
+
+        },
+        series: [
                {
-                  name: 'Profit',
+                  name: series_names[0],
                   type: 'column',
                   yAxis: 1,
 
                   data: _values_y1,
                   tooltip: {
-                     valueSuffix: ''
+                      valuePrefix: '$',
+                      valueDecimals: 2,
                   }
                },
                {
-                  name: '# of Orders',
+                  name: series_names[1],
                   type: 'spline',
                   lineWidth: 0,
                   yAxis: 2,
@@ -114,7 +119,7 @@
                      enabled: true
                   },
                   tooltip: {
-                     valueSuffix: ''
+                      valueSuffix: '',
                   },
                   states: {
                     hover: {
@@ -122,81 +127,10 @@
                     }
                   }
                },
-            ];
-
-var rangeSelector = {
-    //allButtonsEnabled: true,
-    enabled: true,
-    inputEnabled: false,
-    buttonPosition: {
-      align: 'left'
-    },
-    labelStyle: {
-      display: 'none'
-    },
-    buttons: [{
-        type: 'month',
-        count: 1,
-        text: '1m'
-      },
-      {
-        type: 'month',
-        count: 3,
-        text: '3m'
-      },
-      {
-        type: 'month',
-        count: 6,
-        text: '6m'
-      },
-      {
-        type: 'year',
-        count: 1,
-        text: '1y'
-      },
-      {
-        type: 'year',
-        count: 2,
-        text: '2y'
-      },
-      {
-        type: 'year',
-        count: 5,
-        text: '5y'
-      },
-      {
-        type: 'all',
-        text: 'All'
-      },
-      {
-        type: 'second',
-        count: 1,
-        text: 'Latest',
-        events: {
-          click: () => {
-
-            alert('in real app I scroll to latest results');
-
-            return false;
-
-          }
+        ],
         }
-      }
-    ]
-  };
+    );
+    </script>
 
-            var json = {};
-            json.chart = chart;
-            json.title = title;
-            json.subtitle = subtitle;
-            json.xAxis = xAxis;
-            json.yAxis = yAxis;
-            json.tooltip = tooltip;
-            json.legend = legend;
-            json.series = series;
-            json.rangeselector = rangeSelector;
-            $('#container').highcharts(json);
-         });
-      </script>
 </body>
 </html>

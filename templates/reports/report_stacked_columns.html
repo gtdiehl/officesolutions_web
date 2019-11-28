@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Reports</title>
+</head>
+<body>
+    <!-- Highcharts display -->
+	<div class="border" id="container" style="min-width: 250px; height: 750px; margin: 0 auto"></div>
+
+
+
+    <!-- Chartjs libraries -->
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/drilldown.js"></script>
+
+    <script>
+      _categories = {{categories|safe}};
+      _values = {{values_y1|safe}};
+      _values2 = {{values_y2|safe}};
+      _values3 = {{values_y3|safe}};
+
+      _drilldown_categories = {{title_axis_y2|safe}};
+      _drilldown_sub_categories = {{title_axis_y3|safe}};
+
+      var _title_axis_x = '{{ title_series_names }}';
+      _title_axis_x = _title_axis_x.replace('[','');
+      _title_axis_x = _title_axis_x.replace(']','');
+      _title_axis_x = _title_axis_x.replace(/&#39;/g,'');
+      _title_axis_x = _title_axis_x.replace(/ /g, "")
+      console.log(_values);
+      console.log(_values2);
+      console.log(_values3);
+      var series_names = _title_axis_x.split(",");
+
+
+     Highcharts.setOptions({
+         colors: ['#058DC7', '#50B432', '#ED561B', '#DDDF00', '#24CBE5', '#64E572', '#FF9655', '#FFF263', '#6AF9C4',
+             '#DF2B41', '#5B4EDF', '#DF0BDB', '#3ADF0A'],
+         lang: {
+            thousandsSep: ','
+        }
+     });
+
+      var chart = Highcharts.chart('container', {
+	  chart: {
+              type: 'column'
+	  },
+	  title: {
+              text: '{{ title }}'
+	  },
+      subtitle: {
+              text: 'Date Range: {{ from_month }}/{{ from_year }} to {{ to_month }}/{{ to_year }}'
+      },
+	  xAxis: {
+          categories:_categories,
+          crosshair: true,
+          title: {
+            text: '{{ title_axis_x }}'
+          }
+	  },
+	  yAxis: {
+          labels: {
+            format: '{value}'
+          },
+          title: {
+            text: '{{ title_axis_y1 }}'
+          }
+	  },
+	  tooltip: {
+              pointFormat: '<span style=color:{series.color}"><b>{series.name}</b></span>: {point.y} (<b>{point.percentage:.0f}%</b>)<br/>',
+              shared: true,
+	  },
+	  plotOptions: {
+        column: {
+            pointPadding: 0.2,
+            borderWidth: 0,
+            stacking: 'percent'
+        },
+        series: {
+            cursor: 'pointer',
+            point: {
+                events: {
+                    click: function () {
+                        //alert('Category: ' + this.category + ', value: ' + this.y);
+                        switch(this.category) {
+                          case "West":
+                            r = 0;
+                            break;
+                          case "South":
+                            r = 1;
+                            break;
+                          case "East":
+                              r = 2;
+                              break;
+                          case"Central":
+                              r = 3;
+                              break;
+                          default:
+                            r = 0;
+                        }
+                        console.log(r)
+                        chart.destroy();
+                        init_graph(r);
+                    }
+                }
+            }
+        }
+	  },
+
+      });
+
+      for(i=0; i<series_names.length; i++){
+        chart.addSeries({
+            name: series_names[i],
+            data: _values[i],
+        }, true);
+
+        };
+
+            function init_graph(r) {
+              var hc_options = {
+                chart: {
+                  renderTo: 'container',
+                    type: 'column'
+                },
+                  	  plotOptions: {
+                          column: {
+                              pointPadding: 0.2,
+                              borderWidth: 0,
+                              stacking: 'percent'
+                          },
+        series: {
+            cursor: 'pointer',
+            point: {
+                events: {
+                    click: function () {
+                        //alert('Category: ' + this.category + ', value: ' + this.y);
+                         chart.destroy();
+                        init_sub_graph(r);
+                    }
+                }
+            }
+        }
+                      },
+                  	  xAxis: {
+          categories: _drilldown_categories,
+          crosshair: true,
+          title: {
+            text: 'cxdvgdfg'
+          }
+	  },
+              };
+
+              chart = new Highcharts.Chart(hc_options);
+              console.log(series_names);
+                      for(i=0; i<series_names.length; i++){
+            chart.addSeries({
+                name: series_names[i],
+                data: _values2[r][i],
+            }, true);
+
+            };
+            };
+
+
+                        function init_sub_graph(r) {
+              var hc_options = {
+                chart: {
+                  renderTo: 'container',
+                    type: 'column'
+                },
+                  	  plotOptions: {
+                          column: {
+                              pointPadding: 0.2,
+                              borderWidth: 0,
+                              stacking: 'percent'
+                          },
+        series: {
+            cursor: 'pointer',
+            point: {
+                events: {
+                    click: function () {
+                        //alert('Category: ' + this.category + ', value: ' + this.y);
+                        location.reload();
+                    }
+                }
+            }
+        }
+                      },
+                  	  xAxis: {
+          categories: _drilldown_sub_categories,
+          crosshair: true,
+          title: {
+            text: '342432'
+          }
+	  },
+              };
+
+              chart = new Highcharts.Chart(hc_options);
+              console.log(series_names);
+                      for(i=0; i<series_names.length; i++){
+            chart.addSeries({
+                name: series_names[i],
+                data: _values3[r][i],
+            }, true);
+
+            };
+            };
+      </script>
+</body>
+</html>
