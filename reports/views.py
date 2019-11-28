@@ -218,11 +218,8 @@ def discounts_by_region(df, from_month, from_year, to_month, to_year):
                 a = z[(z['Sub-Category'] == f'{sub_category}')]
                 a = a[(a['Discount'] == f'{discount}')]
                 l.append(len(a.index))
-                print(f"{region}:{sub_category}:{discount}:{len(a.index)}")
             series_drilldown_sub_data.append(l)
         charts_drilldown_sub_list.append(series_drilldown_sub_data)
-
-    print(charts_drilldown_sub_list)
 
     return discount_values, region_values, series_data, category_values, charts_drilldown_list, sub_category_values, charts_drilldown_sub_list
 
