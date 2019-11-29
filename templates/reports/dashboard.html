@@ -122,19 +122,24 @@ $(function () {
 <body>
     <div class="container-fluid">
         <div class="row">
-            <div class="col-lg-8">
+            <div class="col-lg-6">
                 <b>Key Sales and Profit Metrics by Product Categories</b>
             </div>
-            <div class="col-lg-4">
+            <div class="col-lg-6">
                 <form id="form" name="form" class="form-inline">
                     <div class="form-group">
-                        <label for="startDate">Start Date</label>
+                        <label for="startDate">Start Date&nbsp;</label>
+                    </div>
+                    <div class="form-group">
                         <input id="startDate" name="startDate" type="text" class="form-control" />
                         &nbsp;
                     </div>
                     <div class="form-group">
-                        <label for="endDate">End Date</label>
+                        <label for="endDate">End Date&nbsp;</label><p></p>
+                    </div>
+                    <div class="form-group">
                         <input id="endDate" name="endDate" type="text" class="form-control" />
+                        &nbsp;
                     </div>
                     <input type="button" value="Refresh">
                 </form>
@@ -142,26 +147,26 @@ $(function () {
         </div>
         <div class="row">
             <div class="col-sm-6">
-                <iframe name="top_side" style="min-width: 100%; height: 380px; margin: 0 auto" frameBorder="10" src="dashboard_report/1"></iframe>
+                <iframe name="top_side" style="min-width: 100%; height: 380px; margin: 0 auto" frameBorder="0" src="dashboard_report/2"></iframe>
                 <!--
                 {% load static %}
                 <img src="{% static "images/Spinner-1s-200px.gif" %}" alt="My image">
                 -->
             </div>
             <div class="col-sm-6">
-                <iframe name="top_side" style="min-width: 100%; height: 380px; margin: 0 auto" frameBorder="10" src="dashboard_report/2"></iframe>
+                <iframe name="top_side" style="min-width: 100%; height: 380px; margin: 0 auto" frameBorder="0" src="dashboard_report/1"></iframe>
             </div>
       </div>
       <div class="row">
-          <div class="col-sm-6">
+          <div class="col-lg-6">
               <p>Sales&nbsp&nbsp&nbspProfit</p>
               <p>8.5 M&nbsp&nbsp&nbsp1.5 M</p>
           </div>
-          <div class="col-sm-3">
-              <iframe name="top_side" style="min-width: 100%; height: 230px; margin: 0 auto" frameBorder="10" src="dashboard_report/3"></iframe>
+          <div class="col-lg-3">
+              <iframe name="top_side" style="min-width: 100%; height: 250px; margin: 0 auto" frameBorder="0" src="dashboard_report/4"></iframe>
           </div>
-           <div class="col-sm-3">
-              <iframe name="top_side" style="min-width: 100%; height: 230px; margin: 0 auto" frameBorder="10" src="dashboard_report/4"></iframe>
+           <div class="col-lg-3">
+              <iframe name="top_side" style="min-width: 100%; height: 250px; margin: 0 auto" frameBorder="0" src="dashboard_report/3"></iframe>
           </div>
       </div>
       <div class="row">

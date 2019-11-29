@@ -11,17 +11,6 @@
     <script src="https://code.highcharts.com/maps/modules/offline-exporting.js"></script>
     <script src="https://code.highcharts.com/mapdata/countries/us/us-all.js"></script>
 
-
-
-<script src="http://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.js"></script>
-<script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js'></script>
-<script type='text/javascript' src='loadImg.js'></script>
-<script type='text/javascript'>
-    $(function(){
-        $('img').imgPreload()
-    })
-</script>
-
  </head>
 <body>
 
@@ -58,9 +47,6 @@
 
         legend: {
             layout: 'vertical',
-            labelFormatter: function () {
-                return '$' + (this.from);
-            },
             borderWidth: 0,
             backgroundColor: 'rgba(255,255,255,0.85)',
             floating: true,
