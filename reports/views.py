@@ -5,6 +5,7 @@ from datetime import date
 import numpy as np
 
 from .models import Reports, Dashboard_Report
+from reports.apps import sales_db
 import pandas as pd
 
 us_state_abbrev = {
@@ -81,10 +82,10 @@ def dashboard_report(request, dashboard_report_id):
     except Reports.DoesNotExist:
         raise Http404("Report does not exist.")
 
-    categories, values_y1, values_y2, values_y3, table_content, title, template, title_axis_y1, title_axis_y2, title_axis_y3, title_axis_x,\
+    categories, values_y1, values_y2, values_y3, title, template, title_axis_y1, title_axis_y2, title_axis_y3, title_axis_x,\
         title_series_names = dashboard_graph(dashboard_report_id, 12, 2016, 12, 2017)
 
-    context = {"categories": categories, 'values_y1': values_y1, 'values_y2': values_y2, 'values_y3': values_y3, 'table_data': table_content,
+    context = {"categories": categories, 'values_y1': values_y1, 'values_y2': values_y2, 'values_y3': values_y3,
                'report': report, 'title': title, 'from_month': 12, 'from_year': 2016,
                'to_month': 12, 'to_year': 2017, 'title_axis_y1': title_axis_y1,
                'title_axis_y2': title_axis_y2, 'title_axis_y3': title_axis_y3, 'title_axis_x': title_axis_x, 'title_series_names': title_series_names}
@@ -93,11 +94,8 @@ def dashboard_report(request, dashboard_report_id):
 
 def dashboard_graph(report_num, from_month, from_year, to_month, to_year):
 
-    xl = pd.ExcelFile(os.path.join(os.path.dirname(__file__), "data/SalesDataFull.xlsx"))
-    df = xl.parse("Orders")
-
     if report_num == 1:
-        rs = profit_map(df, from_month, from_year, to_month, to_year)
+        rs = profit_map(sales_db, from_month, from_year, to_month, to_year)
         title = "Profits per State"
         categories = ""
         title_axis_y1 = "Profits"
@@ -110,7 +108,7 @@ def dashboard_graph(report_num, from_month, from_year, to_month, to_year):
         values_y3 = ""
         template = "reports/report_map.html"
     elif report_num == 2:
-        rs = sales_map(df, from_month, from_year, to_month, to_year)
+        rs = sales_map(sales_db, from_month, from_year, to_month, to_year)
         title = "Sales per State"
         categories = ""
         title_axis_y1 = "Sales"
@@ -123,7 +121,7 @@ def dashboard_graph(report_num, from_month, from_year, to_month, to_year):
         values_y3 = ""
         template = "reports/report_map.html"
     elif report_num == 3:
-        rs = profit_pie_chart(df, from_month, from_year, to_month, to_year)
+        rs = profit_pie_chart(sales_db, from_month, from_year, to_month, to_year)
         title = "Profit by Product Category"
         categories = ""
         title_axis_y1 = ""
@@ -136,7 +134,7 @@ def dashboard_graph(report_num, from_month, from_year, to_month, to_year):
         values_y3 = ""
         template = "reports/dashboard_profit_pie.html"
     elif report_num == 4:
-        rs = sales_pie_chart(df, from_month, from_year, to_month, to_year)
+        rs = sales_pie_chart(sales_db, from_month, from_year, to_month, to_year)
         title = "Sales by Product Category"
         categories = ""
         title_axis_y1 = ""
@@ -150,12 +148,7 @@ def dashboard_graph(report_num, from_month, from_year, to_month, to_year):
         template = "reports/dashboard_sales_pie.html"
 
 
-    table_content = df.to_html(index=None)
-    table_content = table_content.replace("", "")
-    table_content = table_content.replace('class="dataframe"', "class='table table-striped'")
-    table_content = table_content.replace('border="1"', "")
-
-    return categories, values_y1, values_y2, values_y3, table_content, title, template, title_axis_y1, title_axis_y2, title_axis_y3, title_axis_x,\
+    return categories, values_y1, values_y2, values_y3, title, template, title_axis_y1, title_axis_y2, title_axis_y3, title_axis_x,\
            title_series_names
 
 
@@ -175,10 +168,10 @@ def report(request, report_id):
     input_from = request.GET.get('from').split("/")
     input_to = request.GET.get('to').split("/")
 
-    categories, values_y1, values_y2, values_y3, table_content, title, template, title_axis_y1, title_axis_y2, title_axis_y3, title_axis_x,\
+    categories, values_y1, values_y2, values_y3, title, template, title_axis_y1, title_axis_y2, title_axis_y3, title_axis_x,\
         title_series_names = graph(report_id, int(input_from[0]), int(input_from[1]), int(input_to[0]), int(input_to[1]))
 
-    context = {"categories": categories, 'values_y1': values_y1, 'values_y2': values_y2, 'values_y3': values_y3, 'table_data': table_content,
+    context = {"categories": categories, 'values_y1': values_y1, 'values_y2': values_y2, 'values_y3': values_y3,
                'report': report, 'title': title, 'from_month': input_from[0], 'from_year': input_from[1],
                'to_month': input_to[0], 'to_year': input_to[1], 'title_axis_y1': title_axis_y1,
                'title_axis_y2': title_axis_y2, 'title_axis_y3': title_axis_y3, 'title_axis_x': title_axis_x, 'title_series_names': title_series_names}
@@ -187,11 +180,8 @@ def report(request, report_id):
 
 def graph(report_num, from_month, from_year, to_month, to_year):
 
-    xl = pd.ExcelFile(os.path.join(os.path.dirname(__file__), "data/SalesDataFull.xlsx"))
-    df = xl.parse("Orders")
-
     if report_num == 1:
-        rs = profit_of_ten_products_ave(df, from_month, from_year, to_month, to_year, False)
+        rs = profit_of_ten_products_ave(sales_db, from_month, from_year, to_month, to_year, False)
         title = "Top 10 Products"
         categories = list(rs["Product Name"])
         title_axis_y1 = "Average Profit Per Unit ($ USD)"
@@ -204,7 +194,7 @@ def graph(report_num, from_month, from_year, to_month, to_year):
         values_y3 = ""
         template = "reports/report_single_column.html"
     elif report_num == 2:
-        rs = profit_of_ten_products_ave(df, from_month, from_year, to_month, to_year, True)
+        rs = profit_of_ten_products_ave(sales_db, from_month, from_year, to_month, to_year, True)
         title = "Bottom 10 Products"
         categories = list(rs["Product Name"])
         title_axis_y1 = "Average Profit Per Unit ($ USD)"
@@ -217,7 +207,7 @@ def graph(report_num, from_month, from_year, to_month, to_year):
         values_y3 = ""
         template = "reports/report_single_column.html"
     elif report_num == 3:
-        rs = active_customer_report(df, from_month, from_year, to_month, to_year, False)
+        rs = active_customer_report(sales_db, from_month, from_year, to_month, to_year, False)
         title = "Most Profitable Customer Report"
         categories = list(rs["Customer Name"])
         title_axis_y1 = "Profit ($ USD)"
@@ -230,7 +220,7 @@ def graph(report_num, from_month, from_year, to_month, to_year):
         values_y3 = ""
         template = "reports/report_two_y_axis.html"
     elif report_num == 4:
-        rs = active_customer_report(df, from_month, from_year, to_month, to_year, True)
+        rs = active_customer_report(sales_db, from_month, from_year, to_month, to_year, True)
         title = "Least Profitable Customer Report"
         categories = list(rs["Customer Name"])
         title_axis_y1 = "Profit ($ USD)"
@@ -243,7 +233,7 @@ def graph(report_num, from_month, from_year, to_month, to_year):
         values_y3 = ""
         template = "reports/report_two_y_axis.html"
     elif report_num == 5:
-        rs = sales_and_profits_by_region(df, from_month, from_year, to_month, to_year)
+        rs = sales_and_profits_by_region(sales_db, from_month, from_year, to_month, to_year)
         title = "Sales and Profits by Region"
         categories = list(rs["Region"])
         title_axis_y1 = "Dollar Amount ($ USD)"
@@ -257,7 +247,7 @@ def graph(report_num, from_month, from_year, to_month, to_year):
         template = "reports/report_grouped_columns.html"
     elif report_num == 6:
         discount_values, region_values, series_data, category_values, charts_drilldown_list, sub_category_values, \
-            charts_drilldown_sub_list = discounts_by_region(df, from_month, from_year, to_month, to_year)
+            charts_drilldown_sub_list = discounts_by_region(sales_db, from_month, from_year, to_month, to_year)
         title = "Discounts Given out by Region"
         categories = region_values
         title_axis_y1 = "Percentage of Orders"
@@ -270,13 +260,7 @@ def graph(report_num, from_month, from_year, to_month, to_year):
         values_y3 = charts_drilldown_sub_list
         template = "reports/report_stacked_columns.html"
 
-
-    table_content = df.to_html(index=None)
-    table_content = table_content.replace("", "")
-    table_content = table_content.replace('class="dataframe"', "class='table table-striped'")
-    table_content = table_content.replace('border="1"', "")
-
-    return categories, values_y1, values_y2, values_y3, table_content, title, template, title_axis_y1, title_axis_y2, title_axis_y3, title_axis_x,\
+    return categories, values_y1, values_y2, values_y3, title, template, title_axis_y1, title_axis_y2, title_axis_y3, title_axis_x,\
            title_series_names
 
 
