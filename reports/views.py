@@ -77,17 +77,20 @@ def dashboard(request):
 
 def dashboard_report(request, dashboard_report_id):
 
+    input_from = request.GET.get('from').split("/")
+    input_to = request.GET.get('to').split("/")
+
     try:
         report = Dashboard_Report.objects.get(pk=dashboard_report_id)
     except Reports.DoesNotExist:
         raise Http404("Report does not exist.")
 
     categories, values_y1, values_y2, values_y3, title, template, title_axis_y1, title_axis_y2, title_axis_y3, title_axis_x,\
-        title_series_names = dashboard_graph(dashboard_report_id, 12, 2016, 12, 2017)
+        title_series_names = dashboard_graph(dashboard_report_id, int(input_from[0]), int(input_from[1]), int(input_to[0]), int(input_to[1]))
 
     context = {"categories": categories, 'values_y1': values_y1, 'values_y2': values_y2, 'values_y3': values_y3,
-               'report': report, 'title': title, 'from_month': 12, 'from_year': 2016,
-               'to_month': 12, 'to_year': 2017, 'title_axis_y1': title_axis_y1,
+               'report': report, 'title': title, 'from_month': int(input_from[0]), 'from_year': int(input_from[1]),
+               'to_month': int(input_to[0]), 'to_year': int(input_to[1]), 'title_axis_y1': title_axis_y1,
                'title_axis_y2': title_axis_y2, 'title_axis_y3': title_axis_y3, 'title_axis_x': title_axis_x, 'title_series_names': title_series_names}
     return render(request, template, context=context)
 

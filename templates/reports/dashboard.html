@@ -141,20 +141,20 @@ $(function () {
                         <input id="endDate" name="endDate" type="text" class="form-control" />
                         &nbsp;
                     </div>
-                    <input type="button" value="Refresh">
+                    <input type="button" onclick="setDate()" value="Refresh">
                 </form>
             </div>
         </div>
         <div class="row">
             <div class="col-sm-6">
-                <iframe name="top_side" style="min-width: 100%; height: 380px; margin: 0 auto" frameBorder="0" src="dashboard_report/2"></iframe>
+                <iframe name="map1" style="min-width: 100%; height: 380px; margin: 0 auto" frameBorder="0" src="dashboard_report/2?from=01/2014&to=12/2017"></iframe>
                 <!--
                 {% load static %}
                 <img src="{% static "images/Spinner-1s-200px.gif" %}" alt="My image">
                 -->
             </div>
             <div class="col-sm-6">
-                <iframe name="top_side" style="min-width: 100%; height: 380px; margin: 0 auto" frameBorder="0" src="dashboard_report/1"></iframe>
+                <iframe name="map2" style="min-width: 100%; height: 380px; margin: 0 auto" frameBorder="0" src="dashboard_report/1?from=01/2014&to=12/2017"></iframe>
             </div>
       </div>
       <div class="row">
@@ -163,10 +163,10 @@ $(function () {
               <p>8.5 M&nbsp&nbsp&nbsp1.5 M</p>
           </div>
           <div class="col-lg-3">
-              <iframe name="top_side" style="min-width: 100%; height: 250px; margin: 0 auto" frameBorder="0" src="dashboard_report/4"></iframe>
+              <iframe name="pie1" style="min-width: 100%; height: 250px; margin: 0 auto" frameBorder="0" src="dashboard_report/4?from=01/2014&to=12/2017"></iframe>
           </div>
            <div class="col-lg-3">
-              <iframe name="top_side" style="min-width: 100%; height: 250px; margin: 0 auto" frameBorder="0" src="dashboard_report/3"></iframe>
+              <iframe name="pie2" style="min-width: 100%; height: 250px; margin: 0 auto" frameBorder="0" src="dashboard_report/3?from=01/2014&to=12/2017"></iframe>
           </div>
       </div>
       <div class="row">
@@ -218,5 +218,13 @@ $(function () {
           </div>
       </div>
     </div>
+    <script>
+        function setDate() {
+            window.frames['map1'].location.href = "dashboard_report/2" + "?from=" + (document.getElementById("startDate").value) + "&to=" + (document.getElementById("endDate").value);
+            window.frames['map2'].location.href = "dashboard_report/1" + "?from=" + (document.getElementById("startDate").value) + "&to=" + (document.getElementById("endDate").value);
+            window.frames['pie1'].location.href = "dashboard_report/4" + "?from=" + (document.getElementById("startDate").value) + "&to=" + (document.getElementById("endDate").value);
+            window.frames['pie2'].location.href = "dashboard_report/3" + "?from=" + (document.getElementById("startDate").value) + "&to=" + (document.getElementById("endDate").value);
+        }
+    </script>
 </body>
 </html>
