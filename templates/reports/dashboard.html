@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/3.1.3/css/bootstrap-datetimepicker.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.bootstrapvalidator/0.5.3/css/bootstrapValidator.min.css">
+<script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.bootstrapvalidator/0.5.3/js/bootstrapValidator.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.2/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/3.1.3/js/bootstrap-datetimepicker.min.js"></script>
+
+    <script>
+var bindDateRangeValidation = function (f, s, e) {
+    if(!(f instanceof jQuery)){
+			console.log("Not passing a jQuery object");
+    }
+
+    var jqForm = f,
+        startDateId = s,
+        endDateId = e;
+
+    var checkDateRange = function (startDate, endDate) {
+        var isValid = (startDate != "" && endDate != "") ? startDate <= endDate : true;
+        return isValid;
+    }
+
+    var bindValidator = function () {
+        var bstpValidate = jqForm.data('bootstrapValidator');
+        var validateFields = {
+            startDate: {
+                validators: {
+                    notEmpty: { message: 'This field is required.' },
+                    callback: {
+                        message: 'Start Date must less than or equal to End Date.',
+                        callback: function (startDate, validator, $field) {
+                            return checkDateRange(startDate, $('#' + endDateId).val())
+                        }
+                    }
+                }
+            },
+            endDate: {
+                validators: {
+                    notEmpty: { message: 'This field is required.' },
+                    callback: {
+                        message: 'End Date must greater than or equal to Start Date.',
+                        callback: function (endDate, validator, $field) {
+                            return checkDateRange($('#' + startDateId).val(), endDate);
+                        }
+                    }
+                }
+            },
+          	customize: {
+                validators: {
+                    customize: { message: 'customize.' }
+                }
+            }
+        }
+        if (!bstpValidate) {
+            jqForm.bootstrapValidator({
+                excluded: [':disabled'],
+            })
+        }
+
+        jqForm.bootstrapValidator('addField', startDateId, validateFields.startDate);
+        jqForm.bootstrapValidator('addField', endDateId, validateFields.endDate);
+
+    };
+
+    var hookValidatorEvt = function () {
+        var dateBlur = function (e, bundleDateId, action) {
+            jqForm.bootstrapValidator('revalidateField', e.target.id);
+        }
+
+        $('#' + startDateId).on("dp.change dp.update blur", function (e) {
+            $('#' + endDateId).data("DateTimePicker").setMinDate(e.date);
+            dateBlur(e, endDateId);
+        });
+
+        $('#' + endDateId).on("dp.change dp.update blur", function (e) {
+            $('#' + startDateId).data("DateTimePicker").setMaxDate(e.date);
+            dateBlur(e, startDateId);
+        });
+    }
+
+    bindValidator();
+    hookValidatorEvt();
+};
+
+
+$(function () {
+    //var sd = new Date(), ed = new Date();
+    var sd = "01/2014", ed = "12/2017";
+
+    $('#startDate').datetimepicker({
+      pickTime: false,
+      format: "MM/YYYY",
+      defaultDate: sd,
+      maxDate: ed,
+         minViewMode: 1
+    });
+
+    $('#endDate').datetimepicker({
+      pickTime: false,
+      format: "MM/YYYY",
+      defaultDate: ed,
+      minDate: sd,
+                      minViewMode: 1
+    });
+
+    //passing 1.jquery form object, 2.start date dom Id, 3.end date dom Id
+    bindDateRangeValidation($("#form"), 'startDate', 'endDate');
+});
+</script>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-8">
+                <b>Key Sales and Profit Metrics by Product Categories</b>
+            </div>
+            <div class="col-lg-4">
+                <form id="form" name="form" class="form-inline">
+                    <div class="form-group">
+                        <label for="startDate">Start Date</label>
+                        <input id="startDate" name="startDate" type="text" class="form-control" />
+                        &nbsp;
+                    </div>
+                    <div class="form-group">
+                        <label for="endDate">End Date</label>
+                        <input id="endDate" name="endDate" type="text" class="form-control" />
+                    </div>
+                    <input type="button" value="Refresh">
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <iframe name="top_side" style="min-width: 100%; height: 380px; margin: 0 auto" frameBorder="10" src="dashboard_report/1"></iframe>
+                <!--
+                {% load static %}
+                <img src="{% static "images/Spinner-1s-200px.gif" %}" alt="My image">
+                -->
+            </div>
+            <div class="col-sm-6">
+                <iframe name="top_side" style="min-width: 100%; height: 380px; margin: 0 auto" frameBorder="10" src="dashboard_report/2"></iframe>
+            </div>
+      </div>
+      <div class="row">
+          <div class="col-sm-6">
+              <p>Sales&nbsp&nbsp&nbspProfit</p>
+              <p>8.5 M&nbsp&nbsp&nbsp1.5 M</p>
+          </div>
+          <div class="col-sm-3">
+              <iframe name="top_side" style="min-width: 100%; height: 230px; margin: 0 auto" frameBorder="10" src="dashboard_report/3"></iframe>
+          </div>
+           <div class="col-sm-3">
+              <iframe name="top_side" style="min-width: 100%; height: 230px; margin: 0 auto" frameBorder="10" src="dashboard_report/4"></iframe>
+          </div>
+      </div>
+      <div class="row">
+          <div class="col-lg-6">
+
+          </div>
+          <div class="col-lg-6">
+              <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col"></th>
+                      <th scope="col"># of Orders</th>
+                      <th scope="col">Sales</th>
+                      <th scope="col">Profit Value</th>
+                      <th scope="col">Profit Ratio</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <th scope="row">Furniture</th>
+                      <td>432</td>
+                      <td>$9.3K</td>
+                      <td>$6.3K</td>
+                      <td>20.7%</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Office Supplies</th>
+                      <td>213</td>
+                      <td>$2.5K</td>
+                      <td>$1.3K</td>
+                      <td>11.8%</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Technology</th>
+                      <td>432</td>
+                      <td>$19.3K</td>
+                      <td>$9.3K</td>
+                      <td>50.7%</td>
+                    </tr>
+                    <tr>
+                      <td>Total</td>
+                      <td>432</td>
+                      <td>$29.3K</td>
+                      <td>$19.3K</td>
+                      <td>37.6%</td>
+                    </tr>
+                  </tbody>
+                </table>
+          </div>
+      </div>
+    </div>
+</body>
+</html>

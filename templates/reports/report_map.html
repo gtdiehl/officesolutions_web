@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Reports</title>
+
+    <!-- Chartjs libraries -->
+    <script src="https://code.highcharts.com/maps/highmaps.js"></script>
+    <script src="https://code.highcharts.com/maps/modules/data.js"></script>
+    <script src="https://code.highcharts.com/maps/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/maps/modules/offline-exporting.js"></script>
+    <script src="https://code.highcharts.com/mapdata/countries/us/us-all.js"></script>
+
+
+
+<script src="http://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.js"></script>
+<script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js'></script>
+<script type='text/javascript' src='loadImg.js'></script>
+<script type='text/javascript'>
+    $(function(){
+        $('img').imgPreload()
+    })
+</script>
+
+ </head>
+<body>
+
+    <!-- Highcharts display -->
+    <div class="border" id="container" style="min-width: 250px; height: 350px; margin: 0 auto"></div>
+
+    <script>
+      _values = {{values_y1|safe}};
+
+    Highcharts.setOptions({
+        lang: {
+            thousandsSep: ','
+        }
+    });
+
+    // Instantiate the map
+    Highcharts.mapChart('container', {
+
+        chart: {
+            map: 'countries/us/us-all',
+            borderWidth: 1
+        },
+
+        title: {
+            text: '{{ title }}'
+        },
+      subtitle: {
+              text: 'Date Range: {{ from_month }}/{{ from_year }} to {{ to_month }}/{{ to_year }}'
+      },
+        exporting: {
+            sourceWidth: 600,
+            sourceHeight: 500
+        },
+
+        legend: {
+            layout: 'vertical',
+            labelFormatter: function () {
+                return '$' + (this.from);
+            },
+            borderWidth: 0,
+            backgroundColor: 'rgba(255,255,255,0.85)',
+            floating: true,
+            align: 'left',
+            verticalAlign: 'middle',
+            y: 50
+        },
+
+        mapNavigation: {
+            enabled: true
+        },
+
+        colorAxis: {
+
+
+
+        stops: [
+            [0, '#c4463a'],
+            [0.5, '#fffbbc'],
+            [0.9, '#3060cf']
+        ],
+        },
+        series: [{
+            animation: {
+                duration: 1000
+            },
+            data: _values,
+            joinBy: ['postal-code', 'code'],
+            dataLabels: {
+                enabled: true,
+                color: '#FFFFFF',
+                format: '{point.code}'
+            },
+            name: '{{ title_axis_y1 }}',
+            tooltip: {
+                pointFormat: '{point.code}: ${point.value}'
+            }
+        }]
+    });
+
+      </script>
+</body>
+</html>

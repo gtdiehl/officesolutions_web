@@ -4,18 +4,167 @@ import os
 from datetime import date
 import numpy as np
 
-from .models import Reports
+from .models import Reports, Dashboard_Report
 import pandas as pd
+
+us_state_abbrev = {
+    'Alabama': 'AL',
+    'Alaska': 'AK',
+    'Arizona': 'AZ',
+    'Arkansas': 'AR',
+    'California': 'CA',
+    'Colorado': 'CO',
+    'Connecticut': 'CT',
+    'Delaware': 'DE',
+    'District of Columbia': 'DC',
+    'Florida': 'FL',
+    'Georgia': 'GA',
+    'Hawaii': 'HI',
+    'Idaho': 'ID',
+    'Illinois': 'IL',
+    'Indiana': 'IN',
+    'Iowa': 'IA',
+    'Kansas': 'KS',
+    'Kentucky': 'KY',
+    'Louisiana': 'LA',
+    'Maine': 'ME',
+    'Maryland': 'MD',
+    'Massachusetts': 'MA',
+    'Michigan': 'MI',
+    'Minnesota': 'MN',
+    'Mississippi': 'MS',
+    'Missouri': 'MO',
+    'Montana': 'MT',
+    'Nebraska': 'NE',
+    'Nevada': 'NV',
+    'New Hampshire': 'NH',
+    'New Jersey': 'NJ',
+    'New Mexico': 'NM',
+    'New York': 'NY',
+    'North Carolina': 'NC',
+    'North Dakota': 'ND',
+    'Northern Mariana Islands':'MP',
+    'Ohio': 'OH',
+    'Oklahoma': 'OK',
+    'Oregon': 'OR',
+    'Palau': 'PW',
+    'Pennsylvania': 'PA',
+    'Puerto Rico': 'PR',
+    'Rhode Island': 'RI',
+    'South Carolina': 'SC',
+    'South Dakota': 'SD',
+    'Tennessee': 'TN',
+    'Texas': 'TX',
+    'Utah': 'UT',
+    'Vermont': 'VT',
+    'Virgin Islands': 'VI',
+    'Virginia': 'VA',
+    'Washington': 'WA',
+    'West Virginia': 'WV',
+    'Wisconsin': 'WI',
+    'Wyoming': 'WY',
+}
 
 
 def index(request):
     return render(request, "reports/index.html")
+
+
+def dashboard(request):
+    return render(request, "reports/dashboard.html")
+
+
+def dashboard_report(request, dashboard_report_id):
+
+    try:
+        report = Dashboard_Report.objects.get(pk=dashboard_report_id)
+    except Reports.DoesNotExist:
+        raise Http404("Report does not exist.")
+
+    categories, values_y1, values_y2, values_y3, table_content, title, template, title_axis_y1, title_axis_y2, title_axis_y3, title_axis_x,\
+        title_series_names = dashboard_graph(dashboard_report_id, 12, 2016, 12, 2017)
+
+    context = {"categories": categories, 'values_y1': values_y1, 'values_y2': values_y2, 'values_y3': values_y3, 'table_data': table_content,
+               'report': report, 'title': title, 'from_month': 12, 'from_year': 2016,
+               'to_month': 12, 'to_year': 2017, 'title_axis_y1': title_axis_y1,
+               'title_axis_y2': title_axis_y2, 'title_axis_y3': title_axis_y3, 'title_axis_x': title_axis_x, 'title_series_names': title_series_names}
+    return render(request, template, context=context)
+
+
+def dashboard_graph(report_num, from_month, from_year, to_month, to_year):
+
+    xl = pd.ExcelFile(os.path.join(os.path.dirname(__file__), "data/SalesDataFull.xlsx"))
+    df = xl.parse("Orders")
+
+    if report_num == 1:
+        rs = profit_map(df, from_month, from_year, to_month, to_year)
+        title = "Profits per State"
+        categories = ""
+        title_axis_y1 = "Profits"
+        title_axis_y2 = ""
+        title_axis_y3 = ""
+        title_axis_x = ""
+        title_series_names = ""
+        values_y1 = rs
+        values_y2 = ""
+        values_y3 = ""
+        template = "reports/report_map.html"
+    elif report_num == 2:
+        rs = sales_map(df, from_month, from_year, to_month, to_year)
+        title = "Sales per State"
+        categories = ""
+        title_axis_y1 = "Sales"
+        title_axis_y2 = ""
+        title_axis_y3 = ""
+        title_axis_x = ""
+        title_series_names = ""
+        values_y1 = rs
+        values_y2 = ""
+        values_y3 = ""
+        template = "reports/report_map.html"
+    elif report_num == 3:
+        rs = profit_pie_chart(df, from_month, from_year, to_month, to_year)
+        title = "Profit by Product Category"
+        categories = ""
+        title_axis_y1 = ""
+        title_axis_y2 = ""
+        title_axis_y3 = ""
+        title_axis_x = ""
+        title_series_names = ""
+        values_y1 = rs
+        values_y2 = ""
+        values_y3 = ""
+        template = "reports/dashboard_profit_pie.html"
+    elif report_num == 4:
+        rs = sales_pie_chart(df, from_month, from_year, to_month, to_year)
+        title = "Sales by Product Category"
+        categories = ""
+        title_axis_y1 = ""
+        title_axis_y2 = ""
+        title_axis_y3 = ""
+        title_axis_x = ""
+        title_series_names = ""
+        values_y1 = rs
+        values_y2 = ""
+        values_y3 = ""
+        template = "reports/dashboard_sales_pie.html"
+
+
+    table_content = df.to_html(index=None)
+    table_content = table_content.replace("", "")
+    table_content = table_content.replace('class="dataframe"', "class='table table-striped'")
+    table_content = table_content.replace('border="1"', "")
+
+    return categories, values_y1, values_y2, values_y3, table_content, title, template, title_axis_y1, title_axis_y2, title_axis_y3, title_axis_x,\
+           title_series_names
+
 
 def reports(request):
     context = {
         "reports": Reports.objects.all()
     }
     return render(request, "reports/report.html", context)
+
 
 def report(request, report_id):
     try:
@@ -121,6 +270,7 @@ def graph(report_num, from_month, from_year, to_month, to_year):
         values_y3 = charts_drilldown_sub_list
         template = "reports/report_stacked_columns.html"
 
+
     table_content = df.to_html(index=None)
     table_content = table_content.replace("", "")
     table_content = table_content.replace('class="dataframe"', "class='table table-striped'")
@@ -222,6 +372,46 @@ def discounts_by_region(df, from_month, from_year, to_month, to_year):
         charts_drilldown_sub_list.append(series_drilldown_sub_data)
 
     return discount_values, region_values, series_data, category_values, charts_drilldown_list, sub_category_values, charts_drilldown_sub_list
+
+
+def profit_map(df, from_month, from_year, to_month, to_year):
+    df = _filter_df_by_date(df, "Order Date", from_month, from_year, to_month,
+                            to_year)
+
+    df = df[['Region', 'State', 'Profit']]
+
+    return df.groupby(['State']).sum().reset_index().replace(us_state_abbrev).rename(
+        columns={"Profit": "value", "State": "code"}).to_json(orient='records')
+
+
+def sales_map(df, from_month, from_year, to_month, to_year):
+    df = _filter_df_by_date(df, "Order Date", from_month, from_year, to_month,
+                            to_year)
+
+    df = df[['Region', 'State', 'Sales']]
+
+    return df.groupby(['State']).sum().reset_index().replace(us_state_abbrev).rename(
+        columns={"Sales": "value", "State": "code"}).to_json(orient='records')
+
+
+def profit_pie_chart(df, from_month, from_year, to_month, to_year):
+    df = _filter_df_by_date(df, "Order Date", from_month, from_year, to_month,
+                            to_year)
+
+    df = df[["Category", "Profit"]]
+
+    return df.groupby(["Category"]).sum().reset_index().rename(
+        columns={"Category": "name", "Profit": "y"}).to_json(orient='records')
+
+
+def sales_pie_chart(df, from_month, from_year, to_month, to_year):
+    df = _filter_df_by_date(df, "Order Date", from_month, from_year, to_month,
+                            to_year)
+
+    df = df[["Category", "Sales"]]
+
+    return df.groupby(["Category"]).sum().reset_index().rename(
+        columns={"Category": "name", "Sales": "y"}).to_json(orient='records')
 
 
 def _filter_df_by_date(df, date_column, from_month, from_year, to_month,
