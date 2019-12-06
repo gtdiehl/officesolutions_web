@@ -7,6 +7,9 @@ import numpy as np
 from .models import Reports, Dashboard_Report
 from reports.apps import sales_db
 import pandas as pd
+import math
+
+millnames = ['', 'K', 'M', 'B', 'T']
 
 us_state_abbrev = {
     'Alabama': 'AL',
@@ -72,6 +75,7 @@ def index(request):
 
 
 def dashboard(request):
+
     return render(request, "reports/dashboard.html")
 
 
@@ -91,7 +95,8 @@ def dashboard_report(request, dashboard_report_id):
     context = {"categories": categories, 'values_y1': values_y1, 'values_y2': values_y2, 'values_y3': values_y3,
                'report': report, 'title': title, 'from_month': int(input_from[0]), 'from_year': int(input_from[1]),
                'to_month': int(input_to[0]), 'to_year': int(input_to[1]), 'title_axis_y1': title_axis_y1,
-               'title_axis_y2': title_axis_y2, 'title_axis_y3': title_axis_y3, 'title_axis_x': title_axis_x, 'title_series_names': title_series_names}
+               'title_axis_y2': title_axis_y2, 'title_axis_y3': title_axis_y3, 'title_axis_x': title_axis_x,
+               'title_series_names': title_series_names}
     return render(request, template, context=context)
 
 
@@ -149,6 +154,32 @@ def dashboard_graph(report_num, from_month, from_year, to_month, to_year):
         values_y2 = ""
         values_y3 = ""
         template = "reports/dashboard_sales_pie.html"
+    elif report_num == 5:
+        rs = sales_profit_table(sales_db, from_month, from_year, to_month, to_year)
+        title = ""
+        categories = ""
+        title_axis_y1 = rs["table_values"]
+        title_axis_y2 = ""
+        title_axis_y3 = ""
+        title_axis_x = ""
+        title_series_names = ""
+        values_y1 = ""
+        values_y2 = ""
+        values_y3 = ""
+        template = "reports/dashboard_table.html"
+    elif report_num == 6:
+        rs = sales_profit_totals(sales_db, from_month, from_year, to_month, to_year)
+        title = ""
+        categories = ""
+        title_axis_y1 = rs["total_sales"]
+        title_axis_y2 = rs["total_profit"]
+        title_axis_y3 = ""
+        title_axis_x = ""
+        title_series_names = ""
+        values_y1 = ""
+        values_y2 = ""
+        values_y3 = ""
+        template = "reports/dashboard_totals.html"
 
 
     return categories, values_y1, values_y2, values_y3, title, template, title_axis_y1, title_axis_y2, title_axis_y3, title_axis_x,\
@@ -401,6 +432,39 @@ def sales_pie_chart(df, from_month, from_year, to_month, to_year):
         columns={"Category": "name", "Sales": "y"}).to_json(orient='records')
 
 
+def sales_profit_table(df, from_month, from_year, to_month, to_year):
+    metrics_df = _filter_df_by_date(sales_db, "Order Date", from_month, from_year, to_month, to_year)
+    qty = metrics_df[['Category', 'Quantity']].groupby(['Category']).count()
+    sales = metrics_df[['Category', 'Sales']].groupby(['Category']).sum()
+    profit = metrics_df[['Category', 'Profit']].groupby(['Category']).sum()
+    result = pd.concat([qty, sales, profit], axis=1, sort=False).reset_index()
+    result['Profit Ratio'] = (result.loc[:, "Profit"] / result.loc[:, "Sales"]) * 100
+    result.loc[3] = ['Total'] + [result['Quantity'].sum(), result['Sales'].sum(), result['Profit'].sum(),
+                                 result['Profit Ratio'].sum()]
+    result = result.round({'Profit Ratio': 1})
+    result['Sales'] = result['Sales'].astype(int).apply(lambda x: "{:,}".format(x))
+    result['Sales'] = '$' + result['Sales'].astype(str)
+
+    result['Profit'] = result['Profit'].astype(int).apply(lambda x: "{:,}".format(x))
+    result['Profit'] = '$' + result['Profit'].astype(str)
+    result['Profit Ratio'] = result['Profit Ratio'].astype(str) + '%'
+    table_values = [list(result['Category']), list(result['Quantity']), list(result['Sales']), list(result['Profit']),
+                    list(result['Profit Ratio'])]
+
+    context = {"table_values": table_values, }
+    return context
+
+
+def sales_profit_totals(df, from_month, from_year, to_month, to_year):
+    metrics_df = _filter_df_by_date(df, "Order Date", from_month, from_year, to_month, to_year)
+
+    total_sales = millify(metrics_df['Sales'].sum())
+    total_profit = millify(metrics_df['Profit'].sum())
+
+    context = {"total_sales": total_sales, "total_profit": total_profit,}
+    return context
+
+
 def _filter_df_by_date(df, date_column, from_month, from_year, to_month,
                        to_year):
     if to_month == 12:
@@ -414,3 +478,11 @@ def _filter_df_by_date(df, date_column, from_month, from_year, to_month,
         (df[date_column] < pd.Timestamp(date(to_year, to_month, 1)))
         ]
     return filtered_data
+
+
+def millify(n):
+    n = float(n)
+    millidx = max(0,min(len(millnames)-1,
+                        int(math.floor(0 if n == 0 else math.log10(abs(n))/3))))
+
+    return '{:.2f}{}'.format(n / 10**(3 * millidx), millnames[millidx])

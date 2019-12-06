@@ -147,20 +147,19 @@ $(function () {
         </div>
         <div class="row">
             <div class="col-sm-6">
-                <iframe name="map1" style="min-width: 100%; height: 380px; margin: 0 auto" frameBorder="0" src="dashboard_report/2?from=01/2014&to=12/2017"></iframe>
+                <iframe name="map1" style="min-width: 100%; height: 340px; margin: 0 auto" frameBorder="0" src="dashboard_report/2?from=01/2014&to=12/2017"></iframe>
                 <!--
                 {% load static %}
                 <img src="{% static "images/Spinner-1s-200px.gif" %}" alt="My image">
                 -->
             </div>
             <div class="col-sm-6">
-                <iframe name="map2" style="min-width: 100%; height: 380px; margin: 0 auto" frameBorder="0" src="dashboard_report/1?from=01/2014&to=12/2017"></iframe>
+                <iframe name="map2" style="min-width: 100%; height: 340px; margin: 0 auto" frameBorder="0" src="dashboard_report/1?from=01/2014&to=12/2017"></iframe>
             </div>
       </div>
       <div class="row">
           <div class="col-lg-6">
-              <p>Sales&nbsp&nbsp&nbspProfit</p>
-              <p>8.5 M&nbsp&nbsp&nbsp1.5 M</p>
+            <iframe name="totals" style="min-width: 100%; height: 190px; margin: 0 auto" frameBorder="0" src="dashboard_report/6?from=01/2014&to=12/2017"></iframe>
           </div>
           <div class="col-lg-3">
               <iframe name="pie1" style="min-width: 100%; height: 250px; margin: 0 auto" frameBorder="0" src="dashboard_report/4?from=01/2014&to=12/2017"></iframe>
@@ -173,49 +172,7 @@ $(function () {
           <div class="col-lg-6">
 
           </div>
-          <div class="col-lg-6">
-              <table class="table">
-                  <thead>
-                    <tr>
-                      <th scope="col"></th>
-                      <th scope="col"># of Orders</th>
-                      <th scope="col">Sales</th>
-                      <th scope="col">Profit Value</th>
-                      <th scope="col">Profit Ratio</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <th scope="row">Furniture</th>
-                      <td>432</td>
-                      <td>$9.3K</td>
-                      <td>$6.3K</td>
-                      <td>20.7%</td>
-                    </tr>
-                    <tr>
-                      <th scope="row">Office Supplies</th>
-                      <td>213</td>
-                      <td>$2.5K</td>
-                      <td>$1.3K</td>
-                      <td>11.8%</td>
-                    </tr>
-                    <tr>
-                      <th scope="row">Technology</th>
-                      <td>432</td>
-                      <td>$19.3K</td>
-                      <td>$9.3K</td>
-                      <td>50.7%</td>
-                    </tr>
-                    <tr>
-                      <td>Total</td>
-                      <td>432</td>
-                      <td>$29.3K</td>
-                      <td>$19.3K</td>
-                      <td>37.6%</td>
-                    </tr>
-                  </tbody>
-                </table>
-          </div>
+          <iframe name="table" style="min-width: 100%; height: 230px; margin: 0 auto" frameBorder="0" src="dashboard_report/5?from=01/2014&to=12/2017"></iframe>
       </div>
     </div>
     <script>
@@ -224,6 +181,8 @@ $(function () {
             window.frames['map2'].location.href = "dashboard_report/1" + "?from=" + (document.getElementById("startDate").value) + "&to=" + (document.getElementById("endDate").value);
             window.frames['pie1'].location.href = "dashboard_report/4" + "?from=" + (document.getElementById("startDate").value) + "&to=" + (document.getElementById("endDate").value);
             window.frames['pie2'].location.href = "dashboard_report/3" + "?from=" + (document.getElementById("startDate").value) + "&to=" + (document.getElementById("endDate").value);
+            window.frames['table'].location.href = "dashboard_report/5" + "?from=" + (document.getElementById("startDate").value) + "&to=" + (document.getElementById("endDate").value);
+            window.frames['totals'].location.href = "dashboard_report/6" + "?from=" + (document.getElementById("startDate").value) + "&to=" + (document.getElementById("endDate").value);
         }
     </script>
 </body>

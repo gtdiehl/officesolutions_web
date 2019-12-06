@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+
+    </head>
+    <body>
+
+        <div id="wrap">
+            {% load static %}
+            <object type="image/svg+xml" data="{% static 'images/LoginDialog.svg' %}"></object>
+        </div>
+        <script>
+            function login(email, password) {
+                alert(email);
+            }
+        </script>
+
+        <form method="post" name="theForm">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            <div class="form-group" style="display: none">
+
+                <label for="{{ form.username.id_for_label }}" style="display: none">Username:</label>
+                {{ form.username }}
+                {{ form.username.errors }}
+
+            </div>
+            <div class="form-group" style="display: none">
+
+                <label for="{{ form.password.id_for_label }}" style="display: none">Password:</label>
+                {{ form.password }}
+                {{ form.password.errors }}
+            </div>
+            <button type="submit" style="display: none">Login</button>
+        </form>
+    <script>
+        function login(email, password) {
+            document.getElementsByName("username")[0].setAttribute('value', email);
+            document.getElementsByName("password")[0].setAttribute('value', password);
+
+            document.theForm.submit();
+        }
+
+    </script>
+    </body>
+</html>

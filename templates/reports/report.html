@@ -91,7 +91,8 @@ var bindDateRangeValidation = function (f, s, e) {
 
 
 $(function () {
-    var sd = new Date(), ed = new Date();
+    //var sd = new Date(), ed = new Date();
+    var sd = "01/2014", ed = "12/2017";
 
     $('#startDate').datetimepicker({
       pickTime: false,
@@ -116,33 +117,38 @@ $(function () {
 
 </head>
 <body>
-<form id="form" name="form" class="form-inline">
-    <div class="form-group">
-        <b>Select Report:</b>
-        <select id="reportSelect">
-        {% for report in reports %}
-            <option value="{{ report.id }}">{{ report.name }}</option>
-        {%  endfor %}
-        </select>
+{% if user.is_authenticated %}
+    <form id="form" name="form" class="form-inline">
+        <div class="form-group">
+            <b>Select Report:</b>
+            <select id="reportSelect">
+            {% for report in reports %}
+                <option value="{{ report.id }}">{{ report.name }}</option>
+            {%  endfor %}
+            </select>
 
-        <label for="startDate">Start Date</label>
-        <input id="startDate" name="startDate" type="text" class="form-control" />
-        &nbsp;
-        <label for="endDate">End Date</label>
-        <input id="endDate" name="endDate" type="text" class="form-control" />
+            <label for="startDate">Start Date</label>
+            <input id="startDate" name="startDate" type="text" class="form-control" />
+            &nbsp;
+            <label for="endDate">End Date</label>
+            <input id="endDate" name="endDate" type="text" class="form-control" />
 
 
-    <input type="button" onclick="getIndex()" value="Display Report">
-       </div>
-</form>
+        <input type="button" onclick="getIndex()" value="Display Report">
+           </div>
+    </form>
 
-<iframe name="top_side" style="min-width: 100%; height: 800px; margin: 0 auto" frameBorder="10"></iframe>
+    <iframe name="top_side" style="min-width: 100%; height: 800px; margin: 0 auto" frameBorder="10"></iframe>
 
-<script>
-function getIndex() {
-  window.frames['top_side'].location.href = "{% url 'index' %}" + (document.getElementById("reportSelect").selectedIndex + 1) +
-          "?from=" + (document.getElementById("startDate").value) + "&to=" + (document.getElementById("endDate").value)
-}
-</script>
+    <script>
+    function getIndex() {
+      window.frames['top_side'].location.href = "{% url 'index' %}" + (document.getElementById("reportSelect").selectedIndex + 1) +
+              "?from=" + (document.getElementById("startDate").value) + "&to=" + (document.getElementById("endDate").value)
+    }
+    </script>
+{% else %}
+  <p>You are not logged in</p>
+  <a href="{% url 'login' %}">login</a>
+{% endif %}
 </body>
 </html>
