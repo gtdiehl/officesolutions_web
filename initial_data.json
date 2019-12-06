@@ -72,6 +72,14 @@
   }
 },
 {
+  "model": "sessions.session",
+  "pk": "gv028x7fxvqiftcpoht8ijh0yceb1hgr",
+  "fields": {
+    "session_data": "ZjgzMTlmNDc2ZWNlZDAwMjFhMGY5ZGQ1MTM0NzQ5ZDYxMTM3YmQ2Zjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiIxYjUyY2JjMWFmMGE2NjFkZTcxMjk3NjJjOTg5MzZkODFkNTM5YzMxIn0=",
+    "expire_date": "2019-12-20T21:03:24.936Z"
+  }
+},
+{
   "model": "reports.reports",
   "pk": 1,
   "fields": {
@@ -139,6 +147,20 @@
   "pk": 4,
   "fields": {
     "name": "Sales by Product Category"
+  }
+},
+{
+  "model": "reports.dashboard_report",
+  "pk": 5,
+  "fields": {
+    "name": "Dashboard Table"
+  }
+},
+{
+  "model": "reports.dashboard_report",
+  "pk": 6,
+  "fields": {
+    "name": "Dashboard Totals"
   }
 },
 {
@@ -434,7 +456,7 @@
   "pk": 1,
   "fields": {
     "password": "pbkdf2_sha256$180000$pnhS07XfDnZz$IwpdTG13RuF12dgZJYNkBqCkA9iETxbW3zZancG6/xc=",
-    "last_login": "2019-12-06T20:12:11.111Z",
+    "last_login": "2019-12-06T21:03:24.923Z",
     "is_superuser": true,
     "username": "admin",
     "first_name": "",
@@ -573,6 +595,32 @@
     "content_type": 8,
     "object_id": "4",
     "object_repr": "Sales by Product Category",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 11,
+  "fields": {
+    "action_time": "2019-12-06T21:04:04.354Z",
+    "user": 1,
+    "content_type": 8,
+    "object_id": "5",
+    "object_repr": "Dashboard Table",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 12,
+  "fields": {
+    "action_time": "2019-12-06T21:04:10.727Z",
+    "user": 1,
+    "content_type": 8,
+    "object_id": "6",
+    "object_repr": "Dashboard Totals",
     "action_flag": 1,
     "change_message": "[{\"added\": {}}]"
   }

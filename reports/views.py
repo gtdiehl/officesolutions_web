@@ -73,7 +73,6 @@ us_state_abbrev = {
 def index(request):
     return render(request, "reports/index.html")
 
-
 def dashboard(request):
 
     return render(request, "reports/dashboard.html")
