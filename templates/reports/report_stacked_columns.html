@@ -29,8 +29,10 @@
       _title_axis_x = _title_axis_x.replace('[','');
       _title_axis_x = _title_axis_x.replace(']','');
       _title_axis_x = _title_axis_x.replace(/&#39;/g,'');
+      _title_axis_x = _title_axis_x.replace(/&#x27;/g, '')
       _title_axis_x = _title_axis_x.replace(/ /g, "")
       var series_names = _title_axis_x.split(",");
+      console.log(series_names);
 
 
      Highcharts.setOptions({
