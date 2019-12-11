@@ -17,6 +17,8 @@
     <script src="https://code.highcharts.com/modules/drilldown.js"></script>
 
     <script>
+      var _region = "";
+
       _categories = {{categories|safe}};
       _values = {{values_y1|safe}};
       _values2 = {{values_y2|safe}};
@@ -83,6 +85,7 @@
                 events: {
                     click: function () {
                         //alert('Category: ' + this.category + ', value: ' + this.y);
+                        _region = this.category;
                         switch(this.category) {
                           case "West":
                             r = 0;
@@ -123,6 +126,12 @@
                   renderTo: 'container',
                     type: 'column'
                 },
+                title: {
+              text: 'Discounts given out by the ' + _region + ' Region by Category',
+                },
+                subtitle: {
+              text: 'Date Range: {{ from_month }}/{{ from_year }} to {{ to_month }}/{{ to_year }}'
+      },
                   	  plotOptions: {
                           column: {
                               pointPadding: 0.2,
@@ -146,7 +155,7 @@
           categories: _drilldown_categories,
           crosshair: true,
           title: {
-            text: 'cxdvgdfg'
+            text: 'Category'
           }
 	  },
               };
@@ -168,6 +177,12 @@
                   renderTo: 'container',
                     type: 'column'
                 },
+                title: {
+              text: 'Discounts given out by the ' + _region + ' Region by Sub-Category',
+                },
+                subtitle: {
+              text: 'Date Range: {{ from_month }}/{{ from_year }} to {{ to_month }}/{{ to_year }}'
+      },
                   	  plotOptions: {
                           column: {
                               pointPadding: 0.2,
@@ -190,7 +205,7 @@
           categories: _drilldown_sub_categories,
           crosshair: true,
           title: {
-            text: '342432'
+            text: 'Sub-Category'
           }
 	  },
               };
